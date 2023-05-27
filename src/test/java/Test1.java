@@ -8,7 +8,6 @@ import org.openqa.selenium.io.FileHandler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 @Epic("Тестирование сайта пиццерии ДоДоПица")
