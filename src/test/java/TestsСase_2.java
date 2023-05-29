@@ -2,6 +2,8 @@
 import Pages.*;
 import io.qameta.allure.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.OutputType;
@@ -25,6 +27,7 @@ import java.util.concurrent.TimeUnit;
         "Step4: Получить стоимость на странице \"Корзина\"")
 public class TestsСase_2 {
     private static WebDriver driver;
+    public static Logger log = LogManager.getLogger();
     private SityPage sityPage;
     private MainPage mainPage;
     private BasketPage basketPage;
@@ -36,6 +39,7 @@ public class TestsСase_2 {
 
     @BeforeAll
     public static void start() {
+        log.info("Case_2 Подключаем драйвер, настройки");
         System.setProperty("webdriver.chrome.driver", ConfProperties.getProperty("chromedriver"));
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--incognito");
@@ -55,14 +59,17 @@ public class TestsСase_2 {
             "Нажатие на регион во всплывающем окне. Выбрать регион «Москва»" +
             "Проверка отрытия страницы")
     public void test1() throws InterruptedException {
+        log.info(" Step1 Создаем объекты MainPage, SityPage ");
         System.out.println("1dfgdfgdf");
         mainPage = new MainPage(driver);
         sityPage = new SityPage(driver);
-
+        log.info("Открывается сайт \"dodopizza.ru\"");
         driver.get(ConfProperties.getProperty("syteDodoPizza"));
         Thread.sleep(5000);
+        log.info("Проверка: открытия первой станицы сайта");
         Assertions.assertNotNull(driver.getTitle());
         Thread.sleep(500);
+        log.info("Нажатие на регион во всплывающем окне. Выбрать регион «Москва»");
         sityPage.clickCityBtn();
     }
 
@@ -75,22 +82,23 @@ public class TestsСase_2 {
     @Description("Получение всx товаров в РАЗДЕЛЕ \"Пицца\" на главной странице" +
             "Сравнение счётчика добавленных товаров в корзине и Значения = 5")
     public void test2() throws InterruptedException {
+        log.info("Step2: Добавить 5 случайных пицц из раздела \"Пицца\"");
         mainPage = new MainPage(driver);
         parametrPizzaPage = new ParametrPizzaPage(driver);
 //        deliveryPage = new DeliveryPage(driver);
 //        newAdressPage = new NewAdressPage(driver);
-        // получение всx товаров в РАЗДЕЛЕ "Пицца" на главной странице
+        log.info("Получение всx товаров в РАЗДЕЛЕ \"Пицца\" на главной странице");
         list = mainPage.getListPizza();
 
         // следующие 4 пункта повторяем 5 раза (Добавляем 5 пиццы в корзину)
         for(int k = 0; k < 5; k++) {
-            // Нажатие кнопки "Выбрать" на рендомно выбранной пицце
+        log.info("Нажатие кнопки \"Выбрать\" на рендомно выбранной пицце");
             mainPage.clikRandomPizza(list);
-            // Получить и добавить значения названия пиццы в массив massParams[]
+            log.info("Получить и добавить значения названия пиццы в массив massParams[]");
             parametrPizzaPage.addInMassParam(parametrPizzaPage.getNamePizzaParam());
-            // Получить и добавить заначение суммы пицы в переменну sumParam
+            log.info(" Получить и добавить заначение суммы пицы в переменну sumParam");
             parametrPizzaPage.addPriseInSum(parametrPizzaPage.getPriseInBtn());
-            // Нажать на кнопку «Добавить в корзину за {}Р»
+            log.info(" Нажать на кнопку «Добавить в корзину за {}Р»");
             parametrPizzaPage.clicBtnAddTooBasket();
             if(k == 0) {
                 deliveryPage.clikAdress();
@@ -98,8 +106,8 @@ public class TestsСase_2 {
                 newAdressPage.clickSave();
             }
         }
-        // закончили добавлять товар в корзину
-        // Сравнение счётчика добавленных товаров в корзине и Значения = 5
+        log.info(" закончили добавлять товар в корзину");
+        log.info("Сравнение счётчика добавленных товаров в корзине и Значения = 5");
         Assertions.assertEquals(mainPage.getNamberPizza(), 5);
     }
     @Test
@@ -110,13 +118,13 @@ public class TestsСase_2 {
     @Description("Нажать на кнопку «Корзина» на странице главного меню" +
             "Сравнить отсортированные массивы massBasket[] и massParams[] на равенство компонентов")
     public void test3(){
-
+         log.info("\"Step3: Кликнуть на кнопку корзины\"");
         basketPage = new BasketPage(driver);
      //   mainPage = new MainPage(driver);
         parametrPizzaPage = new ParametrPizzaPage(driver);
-        // Нажать на кнопку «Корзина» на странице главного меню
+        log.info("Нажать на кнопку «Корзина» на странице главного меню");
         mainPage.clickBtnBasket();
-        // Сравнить отсортированные массивы massBasket[] и massParams[] на равенство компонентов
+        log.info("Сравнить отсортированные массивы massBasket[] и massParams[] на равенство компонентов");
         Assertions.assertTrue(Arrays.equals(basketPage.getMassNamesBasket(basketPage.getListBasket()), parametrPizzaPage.getMassNamesParam()));
     }
 
@@ -127,25 +135,29 @@ public class TestsСase_2 {
     @DisplayName("Step4: Получить стоимость на странице \"Корзина\"")
     @Description("Сравнить сумму заказа summBasket  и полученую ранее summParam")
     public void test4(){
+        log.info("Step4: Получить стоимость на странице \"Корзина\"");
+        log.info("Сравнить сумму заказа summBasket  и полученую ранее summParam");
         Assertions.assertEquals(basketPage.getSummBasket(), parametrPizzaPage.getSummParam());
     }
 
     @AfterEach
     public void takeSkreenshot(TestInfo info) throws IOException {
+        log.info("Делаем скриншот после окончания Step");
         File source =((ChromeDriver)driver).getScreenshotAs(OutputType.FILE);
         File dest = new File(System.getProperty("user.dir") + "/screenshots/"+info.getDisplayName().toLowerCase() + ".jpeg");
         FileHandler.copy(source, dest);
         try {
             Allure.addAttachment("PageView", FileUtils.openInputStream(source));
+            log.info("Создан скриншот");
         } catch (IOException | NoSuchSessionException e) {
             System.out.println(e);
         }
-        System.out.println("Делаем скриншот");
     }
     @AfterAll
     public static void tearDown() {
-        System.out.println("All the tests are executed");
+        log.info("Закрытие окна браузера");
         driver.close();
+        log.info("Закрытие драйвера");
         driver.quit();
     }
 }

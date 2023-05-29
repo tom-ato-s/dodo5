@@ -1,7 +1,5 @@
 package Pages;
 
-import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,7 +25,6 @@ private WebElement CityBtns;
     /**
      * Метод для осуществления выбора города
      */
-    @Step("Выбор региона - Москва")
     public void clickCityBtn() {
         try {
             CityBtns.click();

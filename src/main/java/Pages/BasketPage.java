@@ -1,6 +1,5 @@
 package Pages;
 
-import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,6 +7,7 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 public class BasketPage {
     private WebDriver driver;
+
     private String xpathStringElementPizza;
     private List<WebElement> listBasket;
     private String[] massBasket = new String[5];
